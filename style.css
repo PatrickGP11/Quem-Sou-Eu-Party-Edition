@@ -1,0 +1,395 @@
+:root {
+    --primary: #6c5ce7;
+    --primary-dark: #5849c2;
+    --accent: #ff7675;
+    --accent-hover: #d63031;
+    --bg-gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+    --glass: rgba(255, 255, 255, 0.92);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --text-main: #2d3436;
+    --text-light: #636e72;
+    --shadow-soft: 0 10px 40px rgba(108, 92, 231, 0.2);
+    --radius-l: 24px;
+    --radius-m: 16px;
+    --radius-pill: 50px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-gradient);
+    height: 100vh;
+    overflow: hidden;
+    color: var(--text-main);
+}
+
+.app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    height: 100%;
+    position: relative;
+    padding: 20px;
+}
+
+/* Telas e Animações */
+.screen {
+    position: absolute;
+    inset: 0;
+    padding: 20px;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.screen.active {
+    display: flex;
+    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Cartões de Vidro Modernos */
+.glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-l);
+    padding: 24px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+}
+
+/* Tipografia */
+h1,
+h2,
+h3 {
+    font-family: 'Fredoka', sans-serif;
+    margin: 0;
+    color: var(--primary);
+}
+
+h1 {
+    font-size: 2.8rem;
+    letter-spacing: -1px;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+/* Botões com "Juice" (Interativos) */
+.btn {
+    border: none;
+    padding: 16px;
+    border-radius: var(--radius-m);
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+    /* Efeito 3D sutil */
+    margin-bottom: 10px;
+}
+
+.btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.primary {
+    background: var(--primary);
+}
+
+.primary:hover {
+    background: var(--primary-dark);
+}
+
+.secondary {
+    background: white;
+    color: var(--text-main);
+    border: 2px solid #dfe6e9;
+}
+
+.accent {
+    background: var(--accent);
+}
+
+.btn-icon {
+    background: #f1f2f6;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: var(--text-main);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: var(--primary);
+    color: white;
+    transform: rotate(15deg);
+}
+
+/* Inputs Bonitos */
+input {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: var(--radius-m);
+    font-size: 1rem;
+    outline: none;
+    transition: 0.3s;
+    background: #fdfdfd;
+    font-family: 'Poppins', sans-serif;
+}
+
+input:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+}
+
+/* --- LOBBY REDESIGN --- */
+.code-display {
+    background: #f8f9fa;
+    border: 2px dashed #b2bec3;
+    border-radius: var(--radius-m);
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.code-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.code-box b {
+    font-size: 2rem;
+    font-family: 'Fredoka', sans-serif;
+    letter-spacing: 2px;
+    color: var(--text-main);
+    background: white;
+    padding: 5px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.players-list-container {
+    flex: 1;
+    overflow-y: auto;
+    margin: 20px 0;
+}
+
+/* Lista de Jogadores em estilo "Pílula" */
+#lobby-player-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#lobby-player-list li {
+    background: white;
+    padding: 12px 15px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#lobby-player-list li i {
+    color: var(--primary);
+    font-size: 1.4rem;
+    background: #eceaf9;
+    padding: 8px;
+    border-radius: 50%;
+}
+
+#lobby-player-list li.me {
+    border: 2px solid var(--primary);
+    background: #f4f3ff;
+}
+
+/* --- GAME SCREEN REDESIGN --- */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.score-pill,
+.timer-pill {
+    background: white;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-weight: bold;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: var(--primary);
+}
+
+/* O cartão de segredo (O "Microfone" da sua imagem) */
+.secret-card {
+    background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+    color: white;
+    padding: 30px 20px;
+    border-radius: var(--radius-l);
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 20px rgba(214, 48, 49, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efeito de brilho no cartão */
+.secret-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+    animation: rotate 10s linear infinite;
+}
+
+.secret-card h2 {
+    color: white;
+    font-size: 2.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 2;
+    margin-top: 5px;
+}
+
+.badge-cat {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Chat e Interação */
+.chat-area {
+    background: white;
+    border-radius: var(--radius-m);
+    padding: 15px;
+    margin-bottom: 15px;
+    flex: 1;
+    border: 2px solid #f1f2f6;
+    overflow-y: auto;
+}
+
+.msg {
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.msg.hint {
+    background: var(--primary);
+    color: white;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 2px 5px rgba(108, 92, 231, 0.3);
+}
+
+.msg.guess {
+    background: #f1f2f6;
+    color: var(--text-main);
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+/* Botões rápidos (Letra, Contexto) */
+.quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn.small {
+    font-size: 0.9rem;
+    padding: 10px;
+    background: #e3e6ea;
+    color: var(--text-main);
+    border: none;
+    box-shadow: none;
+}
+
+.btn.small:hover {
+    background: #d1d8e0;
+    transform: translateY(0);
+}
+
+/* Utilitários */
+.hidden {
+    display: none !important;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
