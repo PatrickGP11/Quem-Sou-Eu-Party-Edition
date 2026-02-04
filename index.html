@@ -3,13 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Quem Sou Eu? - Party</title>
+
     <link rel="shortcut icon" href="assets/icons8-charada-16.png" type="image/charada.png">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
@@ -17,17 +23,19 @@
     <div class="app-container">
 
         <section id="screen-menu" class="screen active">
-            <div class="logo-area">
+            <div class="logo-area" style="text-align: center; margin-bottom: 40px;">
                 <h1>Quem Sou Eu?</h1>
-                <span class="badge">Party Edition</span>
+                <span
+                    style="background: var(--accent); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold;">Party
+                    Edition</span>
             </div>
 
             <div class="menu-options">
-                <input type="text" id="my-nickname" placeholder="Seu Apelido" maxlength="10">
+                <input type="text" id="my-nickname" placeholder="Seu Apelido" maxlength="12">
                 <button class="btn primary" onclick="party.createRoom()">
                     <i class="ph ph-plus-circle"></i> Criar Sala
                 </button>
-                <div class="divider">OU</div>
+                <div style="text-align: center; margin: 15px 0; color: #666;">OU</div>
                 <div class="join-group">
                     <input type="text" id="room-code-input" placeholder="Código da Sala">
                     <button class="btn secondary" onclick="party.joinRoom()">Entrar</button>
@@ -36,32 +44,38 @@
         </section>
 
         <section id="screen-lobby" class="screen">
-            <div class="card glass">
-                <header class="lobby-header">
+            <div class="glass">
+                <header class="lobby-header"
+                    style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
                     <button class="btn-icon" onclick="party.quit()"><i class="ph ph-arrow-left"></i></button>
                     <h2>Lobby</h2>
                 </header>
 
                 <div class="code-display">
-                    <p>Código da Sala:</p>
+                    <p style="margin: 0; color: #666;">Código da Sala:</p>
                     <div class="code-box">
                         <b id="display-room-id">...</b>
-                        <button class="btn-icon small" onclick="party.shareLink()"><i
-                                class="ph ph-whatsapp-logo"></i></button>
-                        <button class="btn-icon small" onclick="party.copyCode()"><i class="ph ph-copy"></i></button>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn-icon small" onclick="party.shareLink()"><i
+                                    class="ph ph-whatsapp-logo"></i></button>
+                            <button class="btn-icon small" onclick="party.copyCode()"><i
+                                    class="ph ph-copy"></i></button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="players-list-container">
-                    <h3>Jogadores (<span id="player-count">1</span>/10)</h3>
+                    <h3>Jogadores (<span id="player-count">1/10</span>)</h3>
                     <ul id="lobby-player-list">
                     </ul>
                 </div>
 
                 <div id="host-controls" class="hidden">
-                    <button class="btn primary full" onclick="game.startGame()">Iniciar Jogo</button>
+                    <button class="btn primary" style="width: 100%" onclick="game.startGame()">Iniciar Jogo</button>
                 </div>
-                <p id="guest-waiting-msg" class="hidden pulse">Aguardando o anfitrião iniciar...</p>
+                <p id="guest-waiting-msg" class="hidden"
+                    style="text-align: center; color: #666; animation: pulse 1.5s infinite;">Aguardando o anfitrião
+                    iniciar...</p>
             </div>
         </section>
 
@@ -71,48 +85,52 @@
                 <div class="timer-pill" id="role-display">Espectador</div>
             </header>
 
-            <main class="card game-card glass">
+            <main class="glass game-card">
                 <div class="chat-area" id="game-chat">
-                    <div class="system-msg">O jogo começou! Aguardando o Mestre...</div>
+                    <div class="system-msg" style="text-align: center; color: #aaa; font-size: 0.8rem;">O jogo começou!
+                    </div>
                 </div>
 
-                <div id="describer-controls" class="controls-area hidden">
+                <div id="describer-controls" class="hidden">
                     <div class="secret-card">
-                        <small>Você é:</small>
+                        <small style="position: relative; z-index: 2;">Você é:</small>
                         <h2 id="secret-word">...</h2>
                         <span id="secret-category" class="badge-cat">...</span>
                     </div>
-                    <div class="input-group">
-                        <input type="text" id="hint-input" placeholder="Dê uma dica (sem dizer a palavra!)">
-                        <button class="btn primary" onclick="game.sendHint()"><i
+
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="hint-input" placeholder="Dê uma dica..." autocomplete="off">
+                        <button class="btn primary" style="width: auto; margin: 0;" onclick="game.sendHint()"><i
                                 class="ph ph-paper-plane-right"></i></button>
                     </div>
+
                     <div class="quick-actions">
-                        <button class="btn small" onclick="game.sendQuickHint('Começa com a letra...')">🅰️
-                            Letra</button>
-                        <button class="btn small" onclick="game.sendQuickHint('Tem a ver com...')">🔗 Contexto</button>
+                        <button class="btn small" onclick="game.sendQuickHint('Começa com a letra')">🅰️ Letra</button>
+                        <button class="btn small" onclick="game.sendQuickHint('Tem a ver com')">🔗 Contexto</button>
                     </div>
                 </div>
 
-                <div id="guesser-controls" class="controls-area hidden">
-                    <div class="status-bar">
+                <div id="guesser-controls" class="hidden">
+                    <div style="text-align: center; margin-bottom: 10px; color: #666;">
                         O Mestre é: <b id="current-master-name">...</b>
                     </div>
-                    <div class="input-group">
-                        <input type="text" id="guess-input" placeholder="Qual é a resposta?">
-                        <button class="btn accent" onclick="game.sendGuess()"><i class="ph ph-lightning"></i>
-                            Chutar</button>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="guess-input" placeholder="Qual é a resposta?" autocomplete="off">
+                        <button class="btn accent" style="width: auto; margin: 0;" onclick="game.sendGuess()"><i
+                                class="ph ph-lightning"></i></button>
                     </div>
                 </div>
             </main>
         </section>
 
         <section id="screen-result" class="screen">
-            <div class="card glass">
+            <div class="glass" style="text-align: center;">
                 <h2>Placar da Rodada</h2>
-                <div class="winner-announce" id="round-winner-display">
+                <div id="round-winner-display" style="font-size: 1.2rem; margin: 20px 0; color: var(--primary);">
                 </div>
-                <ul id="score-list" class="score-list"></ul>
+
+                <ul id="score-list" style="list-style: none; padding: 0; text-align: left; margin-bottom: 20px;"></ul>
+
                 <button id="btn-next-round" class="hidden btn primary" onclick="game.nextRound()">Próxima
                     Rodada</button>
                 <p id="waiting-host-msg" class="hidden">Aguardando Host...</p>

@@ -162,12 +162,11 @@ const party = {
         const list = document.getElementById('lobby-player-list');
         list.innerHTML = '';
 
-        // Cores para os ícones ficarem vibrantes
         const colors = ['#ff7675', '#74b9ff', '#55efc4', '#a29bfe', '#fab1a0', '#ffeaa7'];
 
         game.players.forEach((p, index) => {
             const isMe = p.id === this.myId;
-            const color = colors[index % colors.length]; // Pega uma cor cíclica
+            const color = colors[index % colors.length];
 
             list.innerHTML += `
             <li class="${isMe ? 'me' : ''}">
@@ -175,7 +174,15 @@ const party = {
                 <span>${p.name} ${isMe ? '<small>(Você)</small>' : ''}</span>
             </li>`;
         });
-        document.getElementById('player-count').innerText = game.players.length + "/10";
+
+        // --- CORREÇÃO AQUI ---
+        // Antes estava somando texto, agora substitui apenas o número se o HTML permitir, 
+        // ou atualiza o texto do span corretamente.
+        const countSpan = document.getElementById('player-count');
+        if (countSpan) {
+            // Se no HTML estiver: <h3>Jogadores (<span id="player-count">1/10</span>)</h3>
+            countSpan.innerText = `${game.players.length}/10`;
+        }
     },
 
     removePlayer: function (peerId) {

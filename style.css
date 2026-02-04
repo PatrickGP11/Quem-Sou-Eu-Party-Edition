@@ -393,3 +393,57 @@ input:focus {
         transform: rotate(360deg);
     }
 }
+
+/* --- CORREÇÃO DO CÓDIGO DA SALA (Quebra de linha) --- */
+.code-box b {
+    /* Isso força o código a quebrar a linha se não couber */
+    word-break: break-all;
+    white-space: normal;
+
+    /* Ajuste de tamanho para caber melhor */
+    font-size: 1.2rem;
+    line-height: 1.4;
+    padding: 10px;
+}
+
+/* --- RESPONSIVIDADE MOBILE (Telas menores que 600px) --- */
+@media (max-width: 600px) {
+    .app-container {
+        padding: 10px;
+        height: 100vh;
+        /* Garante que ocupa a tela toda */
+    }
+
+    /* Reduz o tamanho das fontes grandes */
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Ajusta o padding do cartão de vidro para ganhar espaço */
+    .glass {
+        padding: 15px;
+        max-height: 95vh;
+        /* Ocupa mais altura na tela */
+    }
+
+    /* Botões mais fáceis de tocar */
+    .btn {
+        padding: 14px;
+        font-size: 1rem;
+    }
+
+    /* Ajuste na lista de jogadores */
+    #lobby-player-list li {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajuste do cartão secreto (Jogo) */
+    .secret-card h2 {
+        font-size: 1.8rem;
+    }
+}
