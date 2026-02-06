@@ -169,43 +169,42 @@ const party = {
 };
 
 // --- LÓGICA DO JOGO ---
+
 const game = {
     players: [],
     availableWords: [],
     currentMasterId: null,
     currentWord: null,
     round: 1,
-    roundPot: 50, // Pontuação máxima da rodada
+    clueCount: 0, // Conta quantas dicas foram dadas
     timerInterval: null,
-    timeLeft: 150, // 2:30 minutos em segundos
+    timeLeft: 150, // 2:30 minutos
 
     startGame: function () {
         if (this.players.length < 2) return alert("Mínimo 2 jogadores!");
 
-        // Anti-Repetição: Recarrega se acabar
+        // Recarrega palavras se acabarem
         if (this.availableWords.length === 0) this.availableWords = [...fullWordsDB];
 
-        // Sorteia Mestre
         const masterIndex = Math.floor(Math.random() * this.players.length);
         const master = this.players[masterIndex];
         this.currentMasterId = master.id;
 
-        // Sorteia e Remove Palavra (para não repetir)
         const wordIndex = Math.floor(Math.random() * this.availableWords.length);
         const wordObj = this.availableWords[wordIndex];
-        this.availableWords.splice(wordIndex, 1); // Remove da lista
+        this.availableWords.splice(wordIndex, 1);
         this.currentWord = wordObj;
 
-        // Reset Pontuação da Rodada e Tempo
-        this.roundPot = 50;
-        this.timeLeft = 150; // 2:30
+        // Reset da Rodada
+        this.clueCount = 0;
+        this.timeLeft = 150;
 
-        // Inicia Timer no Host
+        // Inicia Timer
         clearInterval(this.timerInterval);
         this.timerInterval = setInterval(() => {
             this.timeLeft--;
             party.broadcast({ type: 'TIME_UPDATE', time: this.timeLeft });
-            this.updateTimerUI(this.timeLeft); // Atualiza local (Host)
+            this.updateTimerUI(this.timeLeft);
 
             if (this.timeLeft <= 0) {
                 this.endRoundTimeOut();
@@ -219,29 +218,25 @@ const game = {
                 masterName: master.name,
                 isMaster: conn.peer === this.currentMasterId,
                 word: conn.peer === this.currentMasterId ? wordObj : null,
-                roundNumber: this.round,
-                currentPot: this.roundPot
+                roundNumber: this.round
             });
         });
 
-        // Configura Host
         this.startClientGame({
             masterName: master.name,
             isMaster: party.myId === this.currentMasterId,
             word: party.myId === this.currentMasterId ? wordObj : null,
-            roundNumber: this.round,
-            currentPot: this.roundPot
+            roundNumber: this.round
         });
     },
 
     startClientGame: function (data) {
         this.showScreen('screen-game');
-        document.getElementById('game-chat').innerHTML = '<div class="system-msg">Rodada iniciada!</div>';
+        // Mensagem inicial explicando a regra
+        document.getElementById('game-chat').innerHTML =
+            '<div class="system-msg">Rodada iniciada! Valendo 100 pts. Cada dica reduz 15 pts!</div>';
 
-        // --- ATUALIZA NÚMERO DA RODADA ---
         document.getElementById('round-display').innerText = data.roundNumber;
-        this.updatePotUI(data.currentPot);
-
         document.getElementById('guess-input').value = '';
         document.getElementById('hint-input').value = '';
 
@@ -249,29 +244,38 @@ const game = {
 
         if (data.isMaster) {
             roleDisplay.innerText = "VOCÊ É O MESTRE";
-            roleDisplay.className = "timer-pill role-master"; // Classe CSS rosa
+            roleDisplay.className = "timer-pill role-master";
             document.getElementById('describer-controls').classList.remove('hidden');
             document.getElementById('guesser-controls').classList.add('hidden');
             document.getElementById('secret-word').innerText = data.word.word;
             document.getElementById('secret-category').innerText = data.word.cat;
         } else {
             roleDisplay.innerText = "ADIVINHADOR";
-            roleDisplay.className = "timer-pill role-guesser"; // Classe CSS cinza/branca
+            roleDisplay.className = "timer-pill role-guesser";
             document.getElementById('describer-controls').classList.add('hidden');
             document.getElementById('guesser-controls').classList.remove('hidden');
             document.getElementById('current-master-name').innerText = data.masterName;
         }
+
+        // Atualiza UI inicial de pontuação potencial
+        this.updatePotUI(100);
     },
 
-    reducePot: function () {
-        if (this.roundPot > 10) this.roundPot -= 5; // Mínimo de 10 pontos
-        this.updatePotUI(this.roundPot);
+    // Calcula quanto vale o acerto agora
+    getCurrentPot: function () {
+        // Começa em 100, tira 15 por dica. Mínimo de 10 pontos.
+        const points = 100 - (this.clueCount * 15);
+        return Math.max(10, points);
     },
 
     updatePotUI: function (val) {
-        // Exibe quanto a rodada vale em algum lugar (pode ser no chat ou topo)
-        // Vamos usar o chat como log
-        // Opcional: Criar elemento visual. Por enquanto, log no chat é bom.
+        // Mostra visualmente quanto vale o acerto no momento
+        const timerBadge = document.getElementById('timer-badge');
+        if (timerBadge) {
+            // Atualiza apenas o texto de pontos se já existir o timer
+            const currentTime = timerBadge.innerText.split('|')[0] || "⏱ 2:30";
+            timerBadge.innerText = `${currentTime} | Prêmio: ${val} pts`;
+        }
     },
 
     updateTimerUI: function (seconds) {
@@ -279,9 +283,6 @@ const game = {
         const sec = seconds % 60;
         const timeString = `${min}:${sec < 10 ? '0' : ''}${sec}`;
 
-        // Vamos usar o espaço do "Placar" ou criar um badge de tempo
-        // Se você tiver um elemento com id 'time-display', use ele. 
-        // Vou injetar no header se não existir.
         let timerBadge = document.getElementById('timer-badge');
         if (!timerBadge) {
             const header = document.querySelector('.game-header');
@@ -291,9 +292,11 @@ const game = {
             header.appendChild(timerBadge);
         }
 
-        timerBadge.innerText = `⏱ ${timeString} | Valendo: ${this.roundPot} pts`;
+        // Mantém o valor do prêmio atualizado visualmente
+        const currentPot = this.getCurrentPot();
+        timerBadge.innerText = `⏱ ${timeString} | Prêmio: ${currentPot} pts`;
 
-        if (seconds <= 10) timerBadge.classList.add('timer-urgent');
+        if (seconds <= 30) timerBadge.classList.add('timer-urgent');
         else timerBadge.classList.remove('timer-urgent');
     },
 
@@ -303,9 +306,12 @@ const game = {
         if (!text) return;
 
         if (party.isHost) {
-            this.reducePot();
-            party.broadcast({ type: 'NEW_HINT', text: text, currentPot: this.roundPot });
+            this.clueCount++; // Aumenta contagem de dicas
+            const newPot = this.getCurrentPot();
+
+            party.broadcast({ type: 'NEW_HINT', text: text, currentPot: newPot });
             this.addMsg(text, 'hint');
+            this.updatePotUI(newPot); // Atualiza UI do Host
         } else {
             party.hostConn.send({ type: 'SEND_HINT', text: text });
         }
@@ -342,16 +348,20 @@ const game = {
             // ACERTOU!
             clearInterval(this.timerInterval);
 
-            // Pontuação
-            player.score += this.roundPot; // Ganhador leva o pote
+            // --- NOVA LÓGICA DE PONTOS ---
+            const guesserPoints = this.getCurrentPot(); // Baseado nas dicas usadas
+            const masterPoints = 50; // Mestre ganha fixo por ter conseguido fazer alguém acertar
+
+            player.score += guesserPoints;
 
             const master = this.players.find(p => p.id === this.currentMasterId);
-            if (master) master.score += this.roundPot; // Mestre TAMBÉM leva o pote (incentivo)
+            if (master) master.score += masterPoints;
 
             const resultData = {
                 winnerName: player.name,
                 correctWord: this.currentWord.word,
                 scores: this.players,
+                pointsWon: guesserPoints, // Para mostrar na tela
                 reason: 'WIN'
             };
 
@@ -389,7 +399,14 @@ const game = {
             title.innerHTML = `⌛ <b>Tempo Esgotado!</b><br>Ninguém acertou.<br>A palavra era: ${data.correctWord}`;
             title.style.color = '#d63031';
         } else {
-            title.innerHTML = `🎉 <b>${data.winnerName}</b> acertou!<br>A palavra era: ${data.correctWord}<br><small>Ganharam ${this.roundPot} pts!</small>`;
+            // Mostra pontos diferenciados
+            title.innerHTML = `
+                🎉 <b>${data.winnerName}</b> acertou!<br>
+                A palavra era: ${data.correctWord}<br>
+                <div style="margin-top:10px; font-size: 0.9rem; color: #666;">
+                    Adivinhador: +${data.pointsWon} pts<br>
+                    Mestre: +50 pts
+                </div>`;
             title.style.color = 'var(--primary)';
         }
 
@@ -420,7 +437,7 @@ const game = {
     }
 };
 
-// --- Wake Lock API (Manter tela ligada) ---
+// --- Wake Lock (Mantenha igual) ---
 let wakeLock = null;
 async function requestWakeLock() {
     try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (err) { }
