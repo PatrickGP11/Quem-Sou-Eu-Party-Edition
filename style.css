@@ -255,15 +255,46 @@ input:focus {
     margin-bottom: 20px;
 }
 
+/* --- CORREÇÕES VISUAIS --- */
+
+/* Badge de Função (Mestre/Adivinhador) e Rodada */
 .score-pill,
 .timer-pill {
     background: white;
     padding: 8px 16px;
-    border-radius: var(--radius-pill);
+    border-radius: 50px;
     font-weight: bold;
     font-size: 0.9rem;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     color: var(--primary);
+    /* Cor padrão roxa */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Quando for Adivinhador (Fundo Cinza), o texto tem que ser branco */
+.role-guesser {
+    background-color: #636e72 !important;
+    color: white !important;
+}
+
+/* Quando for Mestre (Fundo Rosa), texto branco */
+.role-master {
+    background-color: var(--accent) !important;
+    color: white !important;
+}
+
+/* Cronômetro piscando no fim */
+.timer-urgent {
+    background-color: #d63031 !important;
+    color: white !important;
+    animation: pulse 1s infinite;
+}
+
+/* Ajuste para o texto "Adivinhador" não quebrar */
+.timer-pill {
+    white-space: nowrap;
 }
 
 /* O cartão de segredo (O "Microfone" da sua imagem) */
