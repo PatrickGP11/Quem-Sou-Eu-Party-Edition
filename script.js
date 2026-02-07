@@ -169,7 +169,6 @@ const party = {
 };
 
 // --- LÓGICA DO JOGO ---
-
 const game = {
     players: [],
     availableWords: [],
